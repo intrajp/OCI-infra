@@ -1,7 +1,8 @@
 # OCI-infra
 
-Do these before you plan.
+## Needed environment variables
 
+```bash
 export TF_VAR_tenancy_ocid="<tenancy_ocid>"
 export TF_VAR_user_ocid="<user_ocid>"
 export TF_VAR_figerprint="<fingerprint>"
@@ -13,3 +14,4 @@ export TF_VAR_subnet_id="<subent_id>"
 export TF_VAR_image_id="<image_id>"
 export TF_VAR_instance_display_name="<instance_display_name>"
 export TF_VAR_ssh_public_key=$(cat /path/to/public/key)
+```
