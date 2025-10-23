@@ -31,7 +31,7 @@ resource "oci_core_instance" "test_instance" {
   preserve_boot_volume = false
 
   create_vnic_details {
-    subnet_id        = var.subnet_id
+    subnet_id        = data.terraform_remote_state.network.outputs.subnet_id
     assign_public_ip = true
     display_name     = "terraform-vnic"
     hostname_label   = "tfvm"

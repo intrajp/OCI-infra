@@ -5,7 +5,7 @@ terraform {
     # This is the Object storage namespace in your tenancy. This is an example.
     namespace = "nrdrpcgfpznz"
     # path inside the bucket (file name)
-    key    = "compute/terraform.tfstate"
+    key    = "network/terraform.tfstate"
     region = "ap-tokyo-1"
   }
 }
