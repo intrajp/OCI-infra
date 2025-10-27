@@ -30,8 +30,13 @@ variable "vcn_cidr_block" {
 }
 
 variable "subnet_cidr_block" {
-  description = "CIDR block for subnet"
+  description = "CIDR block for public subnet"
   default     = "10.0.1.0/24"
+}
+
+variable "private_subnet_cidr_block" {
+  description = "CIDR block for private subnet"
+  default     = "10.0.2.0/24" # This should not overlap with public subnet 
 }
 
 variable "source_cidr_for_ssh" {
