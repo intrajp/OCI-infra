@@ -149,6 +149,18 @@ resource "oci_core_security_list" "my_security_list" {
     }
   }
 
+  # HTTP (TCP/80) をインターネットから許可 (LBアクセス用)
+  ingress_security_rules {
+    protocol    = "6" # TCP
+    source   = var.source_cidr_for_http # "0.0.0.0/0" or yourIP/32
+    source_type = "CIDR_BLOCK"
+    stateless   = false
+    tcp_options {
+      max = 80
+      min = 80
+    }
+  }
+
   # Allow all for egress 
   egress_security_rules {
     protocol    = "all"
@@ -176,6 +188,19 @@ resource "oci_core_security_list" "my_private_security_list" {
       min = 22
     }
   }
+
+  ingress_security_rules {
+    # Allow HTTP(80) from the load balancer
+    protocol  = "6" # TCP
+    source    = var.vcn_cidr_block # From all VCN
+    source_type = "CIDR_BLOCK"
+    stateless = false
+    tcp_options {
+      max = 80
+      min = 80
+    }
+  }
+
   ingress_security_rules {
     # Ping(ICMP) from incide VCN (For Troubleshooting)
     protocol    = "1" # ICMP

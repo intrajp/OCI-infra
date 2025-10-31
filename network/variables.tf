@@ -43,3 +43,8 @@ variable "source_cidr_for_ssh" {
   description = "IP address for SSH which should be allowed (i.e. Your Global IP/32)"
   default     = "0.0.0.0/0" # This is not recommended.
 }
+
+variable "source_cidr_for_http" {
+  description = "IP address for HTTP which should be allowed (i.e. Your Global IP/32)"
+  default     = "0.0.0.0/0" 
+}
