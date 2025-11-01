@@ -57,7 +57,7 @@ This project uses environment variables (not .tfvars files) to supply sensitive 
 
 Tip: Save these export commands in a file named env.sh and run source env.sh before using Terraform.
 
-```
+```Bash
 # --- OCI Provider Authentication (Required) ---
 export TF_VAR_tenancy_ocid="<tenancy_ocid>"
 export TF_VAR_user_ocid="<user_ocid>"
