@@ -1,0 +1,10 @@
+variable "compartment_id" {}
+variable "tenancy_ocid" {}
+variable "user_ocid" {}
+variable "fingerprint" {}
+variable "private_key_path" {}
+variable "region" {}
+variable "availability_domain" {}
+variable "image_id" {}
+variable "ssh_public_key" {}
+variable "instance_display_name" {}
