@@ -57,17 +57,28 @@ This project uses environment variables (not .tfvars files) to supply sensitive 
 
 Tip: Save these export commands in a file named env.sh and run source env.sh before using Terraform.
 
-```Bash
+```
+# --- OCI Provider Authentication (Required) ---
 export TF_VAR_tenancy_ocid="<tenancy_ocid>"
 export TF_VAR_user_ocid="<user_ocid>"
 export TF_VAR_fingerprint="<fingerprint>"
 export TF_VAR_private_key_path="/path/to/private/key"
 export TF_VAR_region="<region>"
+
+# --- Shared Infrastructure (Used by all modules) ---
 export TF_VAR_compartment_id="<compartment_id>"
+
+# --- Network Configuration (Used in network/) ---
+export TF_VAR_vcn_cidr_block="10.0.0.0/16"
+export TF_VAR_public_subnet_cidr_block="10.0.1.0/24" # Public
+export TF_VAR_private_subnet_cidr_block="10.0.2.0/24" # Private
+export TF_VAR_source_cidr_for_ssh="<YOUR_HOME_PUBLIC_IP>/32" # Your IP for SSH access
+
+# --- Compute Configuration (Used in compute/) ---
 export TF_VAR_availability_domain="<availability_domain>"
 export TF_VAR_image_id="<image_id>"
-export TF_VAR_instance_display_name="<instance_display_name>"
 export TF_VAR_ssh_public_key=$(cat /path/to/public/key)
+export TF_VAR_instance_display_name="<instance_display_name>"
 ```
 
 ## 3. Deployment Steps

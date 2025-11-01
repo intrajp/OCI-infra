@@ -96,7 +96,7 @@ resource "oci_core_subnet" "my_subnet" {
   compartment_id = var.compartment_id
   vcn_id         = oci_core_vcn.my_vcn.id # 1. Depends on VCN
   display_name   = "MyPublicSubnet"
-  cidr_block     = var.subnet_cidr_block # Expects like "10.0.1.0/24"
+  cidr_block     = var.public_subnet_cidr_block # Expects like "10.0.1.0/24"
 
   # Connects Route Table
   route_table_id = oci_core_route_table.my_route_table.id
