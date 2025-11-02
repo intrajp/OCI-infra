@@ -78,6 +78,9 @@ export TF_VAR_availability_domain="<availability_domain>"
 export TF_VAR_image_id="<image_id>"
 export TF_VAR_ssh_public_key=$(cat /path/to/public/key)
 export TF_VAR_instance_display_name="<instance_display_name>"
+
+# --- Database Configuration (Used in database/) ---
+export TF_VAR_db_admin_password="Your_Secure_Password123#"
 ```
 
 ## 3. Deployment Steps
