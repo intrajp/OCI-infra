@@ -6,8 +6,6 @@ This project deploys a standard 3-tier web architecture on Oracle Cloud Infrastr
 
 This configuration provisions the following cloud resources:
 
-
-
 * **Network:** A single VCN with one public subnet and one private subnet.
     * **Public Subnet:** Hosts the Load Balancer and the Bastion (jump) host.
     * **Private Subnet:** Hosts the private web server instances.
@@ -50,6 +48,7 @@ terraform {
     # ...
   }
 }
+```
 
 ## 2. Environment Variables
 
@@ -115,8 +114,8 @@ On completion, the load_balancer_public_ip will be displayed in the outputs.
 
 To destroy all resources, you must proceed in the reverse order of deployment.
 
-    cd load_balancer && terraform destroy
-
-    cd ../compute && terraform destroy
-
-    cd ../network && terraform destroy
+```Bash
+cd load_balancer && terraform destroy
+cd ../compute && terraform destroy
+cd ../network && terraform destroy
+```
