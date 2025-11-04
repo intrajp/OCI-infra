@@ -124,27 +124,28 @@ terraform apply
 
 When apply completed, db_id will be printed out 
 
-➡️ 4. Access & Post-Deployment
+## ➡️ 4. Access & Post-Deployment
 
-1. Web Access
+### 1. Web Access
+`http://<load_balancer_public_ip>`
+(You can confirm the IP with `terraform output load_balancer_public_ip` in the `load_balancer` directory.)
 
-http://<load_balancer_public_ip> (You can confirm IP with load_balancer's terraform output load_balancer_public_ip.)
+### 2. SSH Access
+(No change) Using `ProxyJump` in your `~/.ssh/config` is recommended for easy access.
 
-2. SSH Access
+### 3. Database ACL Configuration (CRITICAL MANUAL STEP)
 
-It is useful if you use ProxyJump in ~/.ssh/config.
+The Autonomous Database is deployed with a *public* endpoint, but its firewall (Access Control List) blocks all traffic by default.
 
-3. Database ACL Configuration (CRITICAL MANUAL STEP)
+Because the private instances connect via a **Service Gateway (SGW)**, not the NAT Gateway, you must add the **Virtual Cloud Network (VCN)** to the ACL.
 
-The Autonomous Database is deployed with a public endpoint, but its firewall (Access Control List) blocks all traffic by default. You must manually add your NAT Gateway's IP to this list to allow your private application instances to connect.
-
-    Find your NAT Gateway IP: OCI Console -> Networking -> VCNs -> MyVcn -> NAT Gateways -> MyNatGateway -> Copy the "Public IP Address".
-
-    Add to ACL: OCI Console -> Autonomous Database -> MyTerraformADB -> Network -> Access Control List -> [Edit].
-
-    Add the NAT Gateway's IP address.
-
-    (Recommended) Also add your local PC's public IP to connect with tools like SQL Developer.
+1.  Go to the OCI Console -> Autonomous Database -> `MyTerraformADB`.
+2.  On the database details page, scroll down to the **Network** section.
+3.  Click [Edit] for the **Access Control List (ACL)**.
+4.  Change the `IP notation type` from "IP address" to **"Virtual Cloud Network"**.
+5.  Select your VCN (e.g., `MyVcn`) from the dropdown.
+6.  (Recommended) Click [Add access control rule] and also add your local PC's public IP (using the "IP address" type) to connect with tools like SQL Developer.
+7.  Click [Save].
 
 🧹 5. Cleanup (Destroy)
 
