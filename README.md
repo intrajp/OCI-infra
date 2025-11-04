@@ -77,7 +77,8 @@ export TF_VAR_source_cidr_for_ssh="<YOUR_HOME_PUBLIC_IP>/32" # Your IP for SSH a
 
 # --- Compute Configuration (Used in compute/) ---
 export TF_VAR_availability_domain="<YOUR_AD_1>"
-export TF_VAR_image_id="<YOUR_CUSTOM_IMAGE_OCID>" # Nginx-preinstalled image
+export TF_VAR_image_bastion_id="<YOUR_CUSTOM_IMAGE_OCID>" # Oracle Linux image
+export TF_VAR_image_private_id="<YOUR_CUSTOM_IMAGE_OCID>" # Nginx and sqlplus preinstalled image
 export TF_VAR_ssh_public_key="$(cat ~/.ssh/id_rsa.pub)"
 export TF_VAR_instance_display_name="Terraform-Instance"
 
@@ -151,10 +152,9 @@ Because the private instances connect via a **Service Gateway (SGW)**, not the N
 
 To destroy all resources, you must proceed in the reverse order of deployment.
 
-    cd database && terraform destroy
-
-    cd ../load_balancer && terraform destroy
-
-    cd ../compute && terraform destroy
-
-    cd ../network && terraform destroy
+```Bash
+cd database && terraform destroy
+cd ../load_balancer && terraform destroy
+cd ../compute && terraform destroy
+cd ../network && terraform destroy
+```
