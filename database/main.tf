@@ -9,4 +9,10 @@ resource "oci_database_autonomous_database" "my_adb" {
 
   # Required password 
   admin_password = var.db_admin_password
+
+  # This prevents destroy database, if you need to destroy, please comment out this block and apply again.
+  lifecycle {
+    prevent_destroy = true
+  }
+
 }
