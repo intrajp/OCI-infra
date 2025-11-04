@@ -5,7 +5,7 @@ resource "oci_load_balancer_load_balancer" "my_lb" {
   shape          = "flexible"
 
   shape_details {
-      minimum_bandwidth_in_mbps = 10
+    minimum_bandwidth_in_mbps = 10
     maximum_bandwidth_in_mbps = 10
   }
 
@@ -19,13 +19,13 @@ resource "oci_load_balancer_load_balancer" "my_lb" {
 resource "oci_load_balancer_backend_set" "my_backend_set" {
   name             = "my-backend-set"
   load_balancer_id = oci_load_balancer_load_balancer.my_lb.id
-  policy           = "ROUND_ROBIN" 
+  policy           = "ROUND_ROBIN"
 
   # Healthcheck (Check if private instance is living)
   health_checker {
     protocol = "HTTP"
-    port     = 80     # Web server port of the instance
-    url_path = "/"    # Check if 200 OK returns
+    port     = 80  # Web server port of the instance
+    url_path = "/" # Check if 200 OK returns
   }
 }
 
@@ -45,6 +45,6 @@ resource "oci_load_balancer_backend" "my_backend" {
 
   # Get Pravate IP from data.compute
   ip_address = data.terraform_remote_state.compute.outputs.private_instance_ip
-  
+
   port = 80 # Web server port in the private subnet
 }
