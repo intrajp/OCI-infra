@@ -52,7 +52,7 @@ terraform {
 }
 ```
 
-2. Environment Variables
+### 2. Environment Variables
 
 This project uses environment variables (not .tfvars files) to supply sensitive or environment-specific values.
 
@@ -87,11 +87,11 @@ export TF_VAR_db_admin_password="<Your_Secure_Password123#>" # Must be complex
 export TF_VAR_db_name="mydemodb"
 ```
 
-🚀 3. Deployment Steps
+## 🚀 3. Deployment Steps
 
 Resources must be deployed in order of dependency.
 
-Step 1: Deploy Network
+### Step 1: Deploy Network
 
 ```Bash
 cd network
@@ -99,7 +99,7 @@ terraform init
 terraform apply
 ```
 
-Step 2: Deploy Compute
+### Step 2: Deploy Compute
 
 ```Bash
 cd ../compute
@@ -107,7 +107,7 @@ terraform init
 terraform apply
 ```
 
-Step 3: Deploy Load Balancer
+### Step 3: Deploy Load Balancer
 
 ```Bash
 cd ../load_balancer
@@ -115,7 +115,7 @@ terraform init
 terraform apply
 ```
 
-Step 4: Deploy Database
+### Step 4: Deploy Database
 
 ```Bash
 cd ../database
@@ -164,7 +164,7 @@ Because the private instances connect via a **Service Gateway (SGW)**, not the N
 6.  (Recommended) Click [Add access control rule] and also add your local PC's public IP (using the "IP address" type) to connect with tools like SQL Developer.
 7.  Click [Save].
 
-🧹 5. Cleanup (Destroy)
+## 🧹 5. Cleanup (Destroy)
 
 To destroy all resources, you must proceed in the reverse order of deployment.
 
