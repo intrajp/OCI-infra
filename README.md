@@ -132,7 +132,23 @@ When apply completed, db_id will be printed out
 (You can confirm the IP with `terraform output load_balancer_public_ip` in the `load_balancer` directory.)
 
 ### 2. SSH Access
-(No change) Using `ProxyJump` in your `~/.ssh/config` is recommended for easy access.
+Using `ProxyJump` in your `~/.ssh/config` is recommended for easy access.
+
+Example:
+```Bash
+Host OCI-bastion
+  HostName <PublicIP of public instance> 
+  User opc
+  IdentityFile </path/to/private_key> 
+  ProxyCommand none
+  ForwardAgent yes
+
+Host private-vm
+  HostName <PrivateIP of private instance> 
+  User opc
+  ProxyJump OCI-bastion
+  IdentityFile </path/to/private_key> 
+```
 
 ### 3. Database ACL Configuration (CRITICAL MANUAL STEP)
 
