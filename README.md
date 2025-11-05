@@ -178,18 +178,27 @@ To connect the Autonomous Database from private instance, you have to have a wal
 4. Send wallet to private instance from your local machine like this.
    $ scp Wallet_mydemodb.zip private-vm:~/
 5. Go to private-vm and unzip the file.
-   [opc@tf-private ~]$ unzip Wallet_mydemodb.zip -d ~/wallet
-6. Edit wallet location to /home/opc/wallet 
-   [opc@tf-private ~]$ vim ~/wallet/sqlnet.ora 
 
    ```Bash
+   [opc@tf-private ~]$ unzip Wallet_mydemodb.zip -d ~/wallet
+   ```
+
+6. Edit wallet location to /home/opc/wallet 
+
+   ```Bash
+   [opc@tf-private ~]$ vim ~/wallet/sqlnet.ora 
+
    #WALLET_LOCATION = (SOURCE = (METHOD = file) (METHOD_DATA = (DIRECTORY="?/network/admin")))
    WALLET_LOCATION = (SOURCE = (METHOD = file) (METHOD_DATA = (DIRECTORY="/home/opc/wallet")))
    SSL_SERVER_DN_MATCH=yes
    ```
 
 7. Export TNS_ADMIN like this.
+
+   ```Bash
    [opc@tf-private ~]$ export TNS_ADMIN=~/wallet
+   ```
+
 8. Connect with sqlplus 
    Now you could connect like this, right?
 
