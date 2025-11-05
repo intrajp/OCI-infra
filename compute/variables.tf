@@ -5,6 +5,7 @@ variable "fingerprint" {}
 variable "private_key_path" {}
 variable "region" {}
 variable "availability_domain" {}
-variable "image_id" {}
+variable "image_bastion_id" {}
+variable "image_private_id" {}
 variable "ssh_public_key" {}
 variable "instance_display_name" {}

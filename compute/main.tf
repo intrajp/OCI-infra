@@ -13,16 +13,16 @@ terraform {
 resource "oci_core_instance" "public_instance" {
   availability_domain = var.availability_domain
   compartment_id      = var.compartment_id
-  shape               = "VM.Standard.E3.Flex"
+  shape               = "VM.Standard.E2.Flex"
 
   shape_config {
     ocpus         = 1
-    memory_in_gbs = 8
+    memory_in_gbs = 4
   }
   source_details {
-    source_id               = var.image_id
+    source_id               = var.image_bastion_id
     source_type             = "image"
-    boot_volume_size_in_gbs = 50
+    boot_volume_size_in_gbs = 30
     instance_source_image_filter_details {
       compartment_id = var.compartment_id
     }
@@ -47,14 +47,14 @@ resource "oci_core_instance" "public_instance" {
 resource "oci_core_instance" "private_instance" {
   availability_domain = var.availability_domain
   compartment_id      = var.compartment_id
-  shape               = "VM.Standard.E4.Flex"
+  shape               = "VM.Standard.E3.Flex"
 
   shape_config {
-    ocpus         = 1
+    ocpus         = 2
     memory_in_gbs = 16
   }
   source_details {
-    source_id               = var.image_id
+    source_id               = var.image_private_id
     source_type             = "image"
     boot_volume_size_in_gbs = 50
     instance_source_image_filter_details {
