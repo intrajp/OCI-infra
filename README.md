@@ -31,7 +31,11 @@ This repository is organized into independent Terraform root modules, which are 
 1.  **Terraform:** v1.0+
 2.  **OCI Account:** An OCI user with API keys configured.
 3.  **OCI Object Storage Bucket:** A private bucket is required to store the Terraform state files (`.tfstate`).
+4.  Custom Images for public instance and private instance. Public instance is for bastion only so no problem, but private instance needs Nginx and sqlplus installed. No need to explain about Nginx, so I will explain about how I installed sqlplus.
+    I installed these two packages and created a custom image.
 
+    oracle-instantclient-basic-23.9.0.25.07-1.el9.x86_64.rpm
+    oracle-instantclient-sqlplus-23.9.0.25.07-1.el9.x86_64.rpm
 ---
 
 ## ⚙️ 2. Configuration
@@ -163,6 +167,48 @@ Because the private instances connect via a **Service Gateway (SGW)**, not the N
 5.  Select your VCN (e.g., `MyVcn`) from the dropdown.
 6.  (Recommended) Click [Add access control rule] and also add your local PC's public IP (using the "IP address" type) to connect with tools like SQL Developer.
 7.  Click [Save].
+
+### 4. Connect to Database from private instance
+
+To connect the Autonomous Database from private instance, you have to have a wallet.
+
+1. Go to 'Oracle AI Database -> MyTerraformADB -> Database connection'
+2. Download wallet to your local machine.
+3. Set password as 'Your_Secure_Password123#' and click 'Download'
+4. Send wallet to private instance from your local machine like this.
+   $ scp Wallet_mydemodb.zip private-vm:~/
+5. Go to private-vm and unzip the file.
+   [opc@tf-private ~]$ unzip Wallet_mydemodb.zip -d ~/wallet
+6. Edit wallet location to /home/opc/wallet 
+   [opc@tf-private ~]$ vim ~/wallet/sqlnet.ora 
+
+   ```Bash
+   #WALLET_LOCATION = (SOURCE = (METHOD = file) (METHOD_DATA = (DIRECTORY="?/network/admin")))
+   WALLET_LOCATION = (SOURCE = (METHOD = file) (METHOD_DATA = (DIRECTORY="/home/opc/wallet")))
+   SSL_SERVER_DN_MATCH=yes
+   ```
+
+7. Export TNS_ADMIN like this.
+   [opc@tf-private ~]$ export TNS_ADMIN=~/wallet
+8. Connect with sqlplus 
+   Now you could connect like this, right?
+
+   ```Bash
+   [opc@tf-private ~]$ sqlplus admin@mydemodb_high
+  
+   SQL*Plus: Release 23.0.0.0.0 - Production on Wed Nov 5 20:43:00 2025
+   Version 23.9.0.25.07
+
+   Copyright (c) 1982, 2025, Oracle.  All rights reserved.
+
+   Enter password: 
+
+   Connected to:
+   Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
+   Version 19.29.0.1.0
+
+   SQL>
+   ```
 
 ## 🧹 5. Cleanup (Destroy)
 
