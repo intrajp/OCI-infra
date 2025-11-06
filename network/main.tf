@@ -228,6 +228,7 @@ resource "oci_core_security_list" "my_private_security_list" {
     destination_type = "CIDR_BLOCK"
     stateless        = false
   }
+}
 
 # -------------------------------------------------
 # 7. Reserved Public IP (for Load Balancer)
