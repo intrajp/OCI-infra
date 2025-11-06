@@ -13,6 +13,9 @@ resource "oci_load_balancer_load_balancer" "my_lb" {
     # Get public subnet ID from data.network
     data.terraform_remote_state.network.outputs.subnet_id
   ]
+
+  # Get Reserved Public IP's ocid from data.network and set
+  reserved_ip_id = data.terraform_remote_state.network.outputs.lb_reserved_ip_id
 }
 
 # 2. Backendset (Group definition to which connection sends)
