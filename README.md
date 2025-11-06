@@ -293,15 +293,3 @@ terraform destroy
 cd ../network
 terraform destroy
 ```
-
-## 🧹 5. Cleanup (Destroy)
-
-To destroy all resources, you must proceed in the reverse order of deployment.
-
-```Bash
-cd database && terraform destroy
-cd ../dns && terraform destroy
-cd ../load_balancer && terraform destroy
-cd ../compute && terraform destroy
-cd ../network && terraform destroy
-```
