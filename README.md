@@ -90,6 +90,9 @@ export TF_VAR_instance_display_name="Terraform-Instance"
 # --- Database Configuration (Used in database/) ---
 export TF_VAR_db_admin_password="<Your_Secure_Password123#>" # Must be complex
 export TF_VAR_db_name="mydemodb"
+
+# --- Domain name ---
+export TF_VAR_domain_name="<your domain name>"
 ```
 
 ## 🚀 3. Deployment Steps
@@ -290,9 +293,6 @@ terraform destroy
 cd ../network
 terraform destroy
 ```
-
-
-
 
 ## 🧹 5. Cleanup (Destroy)
 
