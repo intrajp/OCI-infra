@@ -149,7 +149,7 @@ resource "oci_core_security_list" "my_security_list" {
     }
   }
 
-  # HTTP (TCP/80) をインターネットから許可 (LBアクセス用)
+  # Allow HTTP (TCP/80) from the internet (for LB)
   ingress_security_rules {
     protocol    = "6"                      # TCP
     source      = var.source_cidr_for_http # "0.0.0.0/0" or yourIP/32
@@ -228,4 +228,19 @@ resource "oci_core_security_list" "my_private_security_list" {
     destination_type = "CIDR_BLOCK"
     stateless        = false
   }
+
+# -------------------------------------------------
+# 7. Reserved Public IP (for Load Balancer)
+# -------------------------------------------------
+resource "oci_core_public_ip" "my_lb_reserved_ip" {
+  compartment_id = var.compartment_id
+  display_name   = "MyLB_ReservedIP"
+  lifetime       = "RESERVED"
+
+  ## This could not be destroyed
+  lifecycle {
+    prevent_destroy = true
+  }
 }
+
+
