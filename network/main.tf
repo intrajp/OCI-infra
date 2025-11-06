@@ -229,19 +229,3 @@ resource "oci_core_security_list" "my_private_security_list" {
     stateless        = false
   }
 }
-
-# -------------------------------------------------
-# 7. Reserved Public IP (for Load Balancer)
-# -------------------------------------------------
-resource "oci_core_public_ip" "my_lb_reserved_ip" {
-  compartment_id = var.compartment_id
-  display_name   = "MyLB_ReservedIP"
-  lifetime       = "RESERVED"
-
-  ## This could not be destroyed
-  lifecycle {
-    prevent_destroy = true
-  }
-}
-
-
