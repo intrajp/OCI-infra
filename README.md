@@ -14,6 +14,7 @@ This configuration provisions the following cloud resources:
     * `private_instance`: A private web server (e.g., Nginx) that connects to the database.
 * **Load Balancer:** A public, flexible Load Balancer that distributes HTTP (port 80) traffic to the `private_instance`.
 * **Database:** A public, "Always Free" Autonomous Database (OLTP) for the application backend.
+* **`dns/`**: Manages the OCI DNS Zone and records (depends on `load_balancer`).
 
 ## 🗂️ Directory Structure
 
@@ -119,7 +120,15 @@ terraform init
 terraform apply
 ```
 
-### Step 4: Deploy Database
+### Step 4: Deploy Dns
+
+```Bash
+cd ../dns
+terraform init
+terraform apply
+```
+
+### Step 5: Deploy Database
 
 ```Bash
 cd ../database
@@ -131,11 +140,33 @@ When apply completed, db_id will be printed out
 
 ## ➡️ 4. Access & Post-Deployment
 
-### 1. Web Access
+### 1. DNS Delegation (CRITICAL ONE-TIME MANUAL STEP)
+
+After deploying the `dns/` module (Step 4), you must **delegate your domain's nameservers** to OCI. This is a **one-time** setup.
+
+1.  Run `terraform output` inside the `dns/` directory to get your 4 OCI nameservers.
+
+    ```bash
+    $ terraform output oci_nameservers
+    [
+      "ns1.p201.dns.oraclecloud.net.",
+      "ns2.p201.dns.oraclecloud.net.",
+      ...
+    ]
+    ```
+
+2.  Log in to your domain registrar (e.g., Squarespace, Google Domains).
+3.  Find the Nameserver (NS) settings for your domain (`myawesomeservice.net`).
+4.  Remove all existing nameservers (like `ns-cloud-b1.googledomains.com`).
+5.  Add the **4 OCI nameservers** from your Terraform output.
+
+Once DNS propagates (minutes to hours), OCI will automatically manage your A records. If you destroy/re-apply the load balancer, just re-run `terraform apply` in the `dns/` directory to update the IP.
+
+### 2. Web Access
 `http://<load_balancer_public_ip>`
 (You can confirm the IP with `terraform output load_balancer_public_ip` in the `load_balancer` directory.)
 
-### 2. SSH Access
+### 3. SSH Access
 Using `ProxyJump` in your `~/.ssh/config` is recommended for easy access.
 
 Example:
@@ -154,7 +185,7 @@ Host private-vm
   IdentityFile </path/to/private_key> 
 ```
 
-### 3. Database ACL Configuration (CRITICAL MANUAL STEP)
+### 4. Database ACL Configuration (CRITICAL MANUAL STEP)
 
 The Autonomous Database is deployed with a *public* endpoint, but its firewall (Access Control List) blocks all traffic by default.
 
@@ -168,7 +199,7 @@ Because the private instances connect via a **Service Gateway (SGW)**, not the N
 6.  (Recommended) Click [Add access control rule] and also add your local PC's public IP (using the "IP address" type) to connect with tools like SQL Developer.
 7.  Click [Save].
 
-### 4. Connect to Database from private instance
+### 5. Connect to Database from private instance
 
 To connect the Autonomous Database from private instance, you have to have a wallet.
 
@@ -221,10 +252,55 @@ To connect the Autonomous Database from private instance, you have to have a wal
 
 ## 🧹 5. Cleanup (Destroy)
 
+To destroy all resources, you must proceed in the **reverse order** of deployment.
+
+**Note:** The Autonomous Database is protected from accidental deletion by a `prevent_destroy` flag. You must manually remove this protection *before* you can destroy it.
+
+### Step 1: Destroy Database (Protected)
+1.  Navigate to the `database/` directory.
+2.  Edit `database/main.tf`.
+3.  Comment out (or delete) the `lifecycle { prevent_destroy = true }` block inside the `oci_database_autonomous_database` resource.
+4.  Run `terraform apply` to update the state (this removes the protection).
+5.  Now, run `terraform destroy` to delete the database.
+
+### Step 2: Destroy DNS
+
+```bash
+cd ../dns
+terraform destroy
+```
+
+### Step 3: Destroy Load Balancer 
+
+```bash
+cd ../load_balancer
+terraform destroy
+```
+
+### Step 4: Destroy Compute 
+
+```bash
+cd ../compute
+terraform destroy
+```
+
+### Step 4: Destroy Network 
+
+```bash
+cd ../network
+terraform destroy
+```
+
+
+
+
+## 🧹 5. Cleanup (Destroy)
+
 To destroy all resources, you must proceed in the reverse order of deployment.
 
 ```Bash
 cd database && terraform destroy
+cd ../dns && terraform destroy
 cd ../load_balancer && terraform destroy
 cd ../compute && terraform destroy
 cd ../network && terraform destroy

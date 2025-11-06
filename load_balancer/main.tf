@@ -13,6 +13,7 @@ resource "oci_load_balancer_load_balancer" "my_lb" {
     # Get public subnet ID from data.network
     data.terraform_remote_state.network.outputs.subnet_id
   ]
+
 }
 
 # 2. Backendset (Group definition to which connection sends)

@@ -149,7 +149,7 @@ resource "oci_core_security_list" "my_security_list" {
     }
   }
 
-  # HTTP (TCP/80) をインターネットから許可 (LBアクセス用)
+  # Allow HTTP (TCP/80) from the internet (for LB)
   ingress_security_rules {
     protocol    = "6"                      # TCP
     source      = var.source_cidr_for_http # "0.0.0.0/0" or yourIP/32
