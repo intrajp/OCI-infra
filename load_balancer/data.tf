@@ -19,3 +19,14 @@ data "terraform_remote_state" "compute" {
     region    = "ap-tokyo-1"
   }
 }
+
+# 3. Read dns tfstate file
+data "terraform_remote_state" "dns" {
+  backend = "oci"
+  config = {
+    bucket    = "intrajp_oci_certificates"
+    namespace = "nrdrpcgfpznz"
+    key       = "dns/terraform.tfstate" # Refer dns state
+    region    = "ap-tokyo-1"
+  }
+}
