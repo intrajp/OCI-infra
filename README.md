@@ -24,6 +24,7 @@ This repository is organized into independent Terraform root modules, which are 
 * **`compute/`**: Manages the VM instances (depends on `network`).
 * **`load_balancer/`**: Manages the Load Balancer (depends on `network` and `compute`).
 * **`database/`**: Manages the Autonomous Database (depends on `network` for `compartment_id` only).
+* **`dns/`**: Manages the OCI DNS Zone and records (depends on `load_balancer`).
 
 ---
 
@@ -92,7 +93,7 @@ export TF_VAR_db_admin_password="<Your_Secure_Password123#>" # Must be complex
 export TF_VAR_db_name="mydemodb"
 
 # --- Domain name ---
-export TF_VAR_domain_name="<your domain name>"
+export TF_VAR_domain_name="<your domain name>" # e.g. letsgopc.net
 ```
 
 ## 🚀 3. Deployment Steps
@@ -116,6 +117,7 @@ terraform apply
 ```
 
 ### Step 3: Deploy Load Balancer
+(The complex one. Depends on network, compute, dns, and iam)
 
 ```Bash
 cd ../load_balancer
@@ -123,7 +125,7 @@ terraform init
 terraform apply
 ```
 
-### Step 4: Deploy Dns
+### Step 4: Deploy DNS
 
 ```Bash
 cd ../dns
@@ -253,6 +255,69 @@ To connect the Autonomous Database from private instance, you have to have a wal
    SQL>
    ```
 
+### 6. HTTPS/SSL Configuration (Manual Certbot Setup)
+
+After deployment, the Load Balancer is configured for TCP passthrough on ports 80 and 443 (SSL/TLS is handled by Nginx, not the LB). You must manually install Let's Encrypt certificates on the `private_instance` using `certbot`.
+
+1.  **Log in to the private instance (Bastion Jump):**
+    ```bash
+    # (Assuming you have ~/.ssh/config setup)
+    ssh private-vm
+    ```
+
+2.  **Install Certbot & Nginx Plugin:**
+    Certbot is not in the default Oracle Linux 10 repos. You must find and enable the EPEL repository first.
+    ```bash
+    # Install the EPEL repo package (ol10_addons may be needed)
+    sudo dnf install -y oracle-epel-release-el10
+    
+    # Enable the specific EPEL repo
+    sudo dnf config-manager --enable ol10_u0_developer_EPEL
+    
+    # Install certbot and the nginx plugin
+    sudo dnf install -y certbot python3-certbot-nginx
+    ```
+
+3.  **Configure Nginx `server_name`:**
+    `certbot` needs to find a `server_name` that matches your domain.
+    ```bash
+    sudo vim /etc/nginx/nginx.conf
+    ```
+    Inside the `server { ... }` block (the one listening on port 80), change the default `server_name _;` to your domain:
+    For example, if your domain is letsgopc.net,
+    ```nginx
+    server_name letsgopc.net www.letsgopc.net;
+    ```
+    Test the config before proceeding:
+    ```bash
+    sudo nginx -t
+    ```
+
+4.  **Open the OS Firewall:**
+    The OCI Security Lists are open, but the VM's internal firewall must also be opened.
+    ```bash
+    sudo firewall-cmd --add-service=https --permanent
+    sudo firewall-cmd --reload
+    ```
+
+5.  **Run Certbot:**
+    This command will fetch the certificate, automatically update your Nginx config for SSL, and (if you choose) set up the redirect.
+    ```bash
+    sudo certbot --nginx -d letsgopc.net -d www.letsgopc.net
+    ```
+    * Enter your email address.
+    * Agree to the Terms of Service (`Y`).
+    * When asked to **Redirect**, choose option **`2`**.
+
+6.  **Enable Auto-Renewal:**
+    This ensures your certificate renews automatically before it expires.
+    ```bash
+    sudo systemctl start certbot-renew.timer
+    sudo systemctl enable certbot-renew.timer
+    ```
+
+Your site for example, at `http://letsgopc.net` should now be force-redirected to `https://letsgopc.net` with a valid lock icon.
+
 ## 🧹 5. Cleanup (Destroy)
 
 To destroy all resources, you must proceed in the **reverse order** of deployment.
@@ -287,9 +352,15 @@ cd ../compute
 terraform destroy
 ```
 
-### Step 4: Destroy Network 
+### Step 5: Destroy Network 
 
 ```bash
 cd ../network
 terraform destroy
 ```
+
+### Hint
+You had better only destroy 'compute' which makes your bill small and re-creation fast.
+If you do, please re-create 'load_balancer' after you have re-created 'compute'.
+Just database is in the public subnet, you can set your host machine's public IP so that you can play with. 
+In that case, your host machine needs sqlplus installed.

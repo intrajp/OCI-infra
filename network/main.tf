@@ -92,7 +92,7 @@ resource "oci_core_route_table" "my_private_route_table" {
 # -------------------------------------------------
 # 5-1. Subnet (Public Subnet)
 # -------------------------------------------------
-resource "oci_core_subnet" "my_subnet" {
+resource "oci_core_subnet" "my_public_subnet" {
   compartment_id = var.compartment_id
   vcn_id         = oci_core_vcn.my_vcn.id # 1. Depends on VCN
   display_name   = "MyPublicSubnet"
@@ -128,7 +128,7 @@ resource "oci_core_subnet" "my_private_subnet" {
   prohibit_public_ip_on_vnic = true
 
   # Enable hostname
-  dns_label = "private"
+  dns_label = "tfprivate"
 }
 
 # -------------------------------------------------
@@ -158,6 +158,18 @@ resource "oci_core_security_list" "my_security_list" {
     tcp_options {
       max = 80
       min = 80
+    }
+  }
+
+  # Allow HTTPS (TCP/443) from the internet (for LB)
+  ingress_security_rules {
+    protocol    = "6" # TCP
+    source      = "0.0.0.0/0"
+    source_type = "CIDR_BLOCK"
+    stateless   = false
+    tcp_options {
+      max = 443
+      min = 443
     }
   }
 
@@ -201,6 +213,18 @@ resource "oci_core_security_list" "my_private_security_list" {
     }
   }
 
+  # Allow HTTPS(443) from the Load Balancer
+  ingress_security_rules {
+    protocol    = "6"                # TCP
+    source      = var.vcn_cidr_block # VCN全体から
+    source_type = "CIDR_BLOCK"
+    stateless   = false
+    tcp_options {
+      max = 443
+      min = 443
+    }
+  }
+
   ingress_security_rules {
     # Ping(ICMP) from incide VCN (For Troubleshooting)
     protocol    = "1" # ICMP
@@ -220,6 +244,7 @@ resource "oci_core_security_list" "my_private_security_list" {
       min = 1522
     }
   }
+
 
   # Allow all Egress
   egress_security_rules {

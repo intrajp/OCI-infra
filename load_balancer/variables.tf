@@ -7,3 +7,7 @@ variable "region" {}
 variable "availability_domain" {}
 variable "ssh_public_key" {}
 variable "instance_display_name" {}
+variable "domain_name" {
+  description = "The root domain name (e.g., letsgopc.net)"
+  type        = string
+}
