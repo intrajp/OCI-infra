@@ -44,7 +44,7 @@ This repository is organized into independent Terraform root modules, which are 
 
 ### 1. Backend Configuration
 
-You must edit the `backend.tf` file in **each** directory (`network/`, `compute/`, `load_balancer/`, and `database/`) to match your OCI environment.
+You must edit the `backend.tf` file in **each** directory (`network/`, `compute/`, `load_balancer/`, `database/`, and `dns/`) to match your OCI environment.
 
 ```hcl
 # Example: backend.tf
@@ -246,7 +246,7 @@ To connect the Autonomous Database from private instance, you have to have a wal
 
    Copyright (c) 1982, 2025, Oracle.  All rights reserved.
 
-   Enter password: 
+   Enter password:Your_Secure_Password123#
 
    Connected to:
    Oracle Database 19c Enterprise Edition Release 19.0.0.0.0 - Production
@@ -361,6 +361,9 @@ terraform destroy
 
 ### Hint
 You had better only destroy 'compute' which makes your bill small and re-creation fast.
+
 If you do, please re-create 'load_balancer' after you have re-created 'compute'.
+
 Just database is in the public subnet, you can set your host machine's public IP so that you can play with. 
+
 In that case, your host machine needs sqlplus installed.
