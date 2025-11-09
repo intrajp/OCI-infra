@@ -364,6 +364,8 @@ You had better only destroy 'compute' which makes your bill small and re-creatio
 
 If you do, please re-create 'load_balancer' after you have re-created 'compute'.
 
+Then re-do the process of certbot e.g., 'sudo certbot --nginx -d letsgopc.net -d www.letsgopc.net' selecting option 2 (renew and replace the certificate).
+
 Just database is in the public subnet, you can set your host machine's public IP so that you can play with. 
 
 In that case, your host machine needs sqlplus installed.
