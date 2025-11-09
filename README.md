@@ -50,7 +50,7 @@ You must edit the `backend.tf` file in **each** directory (`network/`, `compute/
 # Example: backend.tf
 terraform {
   backend "oci" {
-    bucket    = "intrajp_oci_certificates" # ⬅️ Your bucket name
+    bucket    = "bucket-20251109-0952" # ⬅️ Your bucket name
     namespace = "nrdrpcgfpznz"           # ⬅️ Your Object Storage namespace
     # key = "..." (This is unique for each directory)
     # ...
@@ -100,7 +100,15 @@ export TF_VAR_domain_name="<your domain name>" # e.g. letsgopc.net
 
 Resources must be deployed in order of dependency.
 
-### Step 1: Deploy Network
+### Step 1: Deploy Compartments (The Foundation)
+
+```Bash
+cd compartments 
+terraform init
+terraform apply
+```
+
+### Step 2: Deploy Network
 
 ```Bash
 cd network
@@ -108,7 +116,7 @@ terraform init
 terraform apply
 ```
 
-### Step 2: Deploy Compute
+### Step 3: Deploy Compute
 
 ```Bash
 cd ../compute
@@ -116,7 +124,7 @@ terraform init
 terraform apply
 ```
 
-### Step 3: Deploy Load Balancer
+### Step 4: Deploy Load Balancer
 (The complex one. Depends on network, compute, dns, and iam)
 
 ```Bash
@@ -125,7 +133,7 @@ terraform init
 terraform apply
 ```
 
-### Step 4: Deploy DNS
+### Step 5: Deploy DNS
 
 ```Bash
 cd ../dns
@@ -133,7 +141,7 @@ terraform init
 terraform apply
 ```
 
-### Step 5: Deploy Database
+### Step 6: Deploy Database
 
 ```Bash
 cd ../database
@@ -359,11 +367,20 @@ cd ../network
 terraform destroy
 ```
 
+### Step 6: Destroy Compartment 
+
+```bash
+cd ../compartment
+terraform destroy
+```
+
 ### Hint
 You had better only destroy 'compute' which makes your bill small and re-creation fast.
 
 If you do, please re-create 'load_balancer' after you have re-created 'compute'.
 
+Then re-do the process of certbot e.g., 'sudo certbot --nginx -d letsgopc.net -d www.letsgopc.net' selecting option 2 (renew and replace the certificate).
+
 Just database is in the public subnet, you can set your host machine's public IP so that you can play with. 
 
-In that case, your host machine needs sqlplus installed.
+In that case, your host machine needs sqlplus installed. After install, you have to download Wallet and set the path and env properly to login.
