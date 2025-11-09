@@ -3,7 +3,7 @@ data "terraform_remote_state" "network" {
 
   # Same settigs as network/backend.tf
   config = {
-    bucket    = "intrajp_oci_certificates"  # Same bucket name as  network
+    bucket    = "bucket-20251109-0952"  # Same bucket name as  network
     namespace = "nrdrpcgfpznz"              # Same namespace as network
     key       = "network/terraform.tfstate" # Designate same state file as network
     region    = "ap-tokyo-1"
