@@ -12,3 +12,6 @@
 # crash log 
 crash.log
 crash.*.log
+
+#
+my-config.tfbackend
