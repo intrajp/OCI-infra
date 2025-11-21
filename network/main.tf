@@ -132,6 +132,44 @@ resource "oci_core_subnet" "my_private_subnet" {
 }
 
 # -------------------------------------------------
+# 5-3. RAG Private Subnet 
+# -------------------------------------------------
+resource "oci_core_subnet" "rag_private_subnet" {
+  # Refer OCID of RAG compartment from data.compartments
+  compartment_id = var.compartment_id
+  
+  vcn_id         = oci_core_vcn.my_vcn.id # Existing VCN
+  display_name   = "RagPrivateSubnet"
+  cidr_block     = var.rag_subnet_cidr_block
+
+  # ★ Using same setting as compute/ private subnet
+  route_table_id    = oci_core_route_table.my_private_route_table.id
+  security_list_ids = [oci_core_security_list.my_private_security_list.id]
+
+  prohibit_public_ip_on_vnic = true
+  dns_label                  = "rag"
+}
+
+# -------------------------------------------------
+# 5-4. OKE Private Subnet 
+# -------------------------------------------------
+resource "oci_core_subnet" "oke_private_subnet" {
+  # Refer OCID of OKE compartment from data.compartments
+  compartment_id = var.compartment_id
+  
+  vcn_id         = oci_core_vcn.my_vcn.id # Existing VCN
+  display_name   = "OKEPrivateSubnet"
+  cidr_block     = var.oke_subnet_cidr_block
+
+  # ★ Using same setting as compute/ private subnet
+  route_table_id    = oci_core_route_table.my_private_route_table.id
+  security_list_ids = [oci_core_security_list.my_private_security_list.id]
+
+  prohibit_public_ip_on_vnic = true
+  dns_label                  = "oke"
+}
+
+# -------------------------------------------------
 # 6-1. Public Security List
 # -------------------------------------------------
 resource "oci_core_security_list" "my_security_list" {
@@ -204,7 +242,7 @@ resource "oci_core_security_list" "my_private_security_list" {
   ingress_security_rules {
     # Allow HTTP(80) from the load balancer
     protocol    = "6"                # TCP
-    source      = var.vcn_cidr_block # From all VCN
+    source      = var.vcn_cidr_block # From whole VCN
     source_type = "CIDR_BLOCK"
     stateless   = false
     tcp_options {
@@ -216,7 +254,7 @@ resource "oci_core_security_list" "my_private_security_list" {
   # Allow HTTPS(443) from the Load Balancer
   ingress_security_rules {
     protocol    = "6"                # TCP
-    source      = var.vcn_cidr_block # VCN全体から
+    source      = var.vcn_cidr_block # from whole VCN
     source_type = "CIDR_BLOCK"
     stateless   = false
     tcp_options {
@@ -245,6 +283,17 @@ resource "oci_core_security_list" "my_private_security_list" {
     }
   }
 
+  # Allow connection to OpenSearch(9200) from VCN
+  ingress_security_rules {
+    protocol  = "6"                  # TCP
+    source    = var.vcn_cidr_block # from whole VCN 
+    source_type = "CIDR_BLOCK"
+    stateless = false
+    tcp_options {
+      max = 9200
+      min = 9200
+    }
+  }
 
   # Allow all Egress
   egress_security_rules {

@@ -13,3 +13,13 @@ output "private_subnet_id" {
   description = "The OCID of the private subnet"
   value       = oci_core_subnet.my_private_subnet.id
 }
+
+output "rag_subnet_id" {
+  description = "The OCID of the RAG private subnet"
+  value       = oci_core_subnet.rag_private_subnet.id
+}
+
+output "oke_private_subnet_id" {
+  description = "The OCID of the OKE private subnet"
+  value       = oci_core_subnet.oke_private_subnet.id
+}

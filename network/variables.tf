@@ -24,6 +24,14 @@ variable "compartment_id" {
   description = "OCID for compartment which the resources shoudl be created"
 }
 
+variable "rag_compartment_id" {
+  description = "OCID for compartment which the rag resources shoudl be created"
+}
+
+variable "oke_compartment_id" {
+  description = "OCID for compartment which the oke resources shoudl be created"
+}
+
 variable "vcn_cidr_block" {
   description = "CIDR block for VCN"
   default     = "10.0.0.0/16"
@@ -37,6 +45,16 @@ variable "public_subnet_cidr_block" {
 variable "private_subnet_cidr_block" {
   description = "CIDR block for private subnet"
   default     = "10.0.2.0/24" # This should not overlap with public subnet 
+}
+
+variable "rag_subnet_cidr_block" {
+  description = "CIDR block for the RAG private subnet"
+  default     = "10.0.3.0/24" # This should not overlap with other subnet 
+}
+
+variable "oke_subnet_cidr_block" {
+  description = "CIDR block for the OKE worker node private subnet"
+  default     = "10.0.4.0/24" # This should not overlap with other subnet 
 }
 
 variable "source_cidr_for_ssh" {
