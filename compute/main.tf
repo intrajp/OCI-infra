@@ -56,7 +56,7 @@ resource "oci_core_instance" "private_instance" {
   source_details {
     source_id               = var.image_private_id
     source_type             = "image"
-    boot_volume_size_in_gbs = 50
+    boot_volume_size_in_gbs = 200
     instance_source_image_filter_details {
       compartment_id = var.compartment_id
     }

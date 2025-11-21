@@ -85,6 +85,7 @@ export TF_VAR_source_cidr_for_ssh="<YOUR_HOME_PUBLIC_IP>/32" # Your IP for SSH a
 export TF_VAR_availability_domain="<YOUR_AD_1>"
 export TF_VAR_image_bastion_id="<YOUR_CUSTOM_IMAGE_OCID>" # Oracle Linux image
 export TF_VAR_image_private_id="<YOUR_CUSTOM_IMAGE_OCID>" # Nginx and sqlplus preinstalled image
+export TF_VAR_image_oke_id="<OKE_IMAGE_OCID>" # e.g., Oracle-Linux-8.10-2025.09.16-0-OKE-1.33.1-1330 
 export TF_VAR_ssh_public_key="$(cat ~/.ssh/id_rsa.pub)"
 export TF_VAR_instance_display_name="Terraform-Instance"
 
