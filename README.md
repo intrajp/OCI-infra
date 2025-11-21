@@ -50,7 +50,7 @@ You must edit the `backend.tf` file in **each** directory (`network/`, `compute/
 # Example: backend.tf
 terraform {
   backend "oci" {
-    bucket    = "bucket-20251109-0952" # ⬅️ Your bucket name
+    bucket    = "bucket-20251111-1910" # ⬅️ Your bucket name
     namespace = "nrdrpcgfpznz"           # ⬅️ Your Object Storage namespace
     # key = "..." (This is unique for each directory)
     # ...
