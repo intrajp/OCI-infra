@@ -15,3 +15,6 @@ crash.*.log
 
 #
 my-config.tfbackend
+
+# Saved Terraform plan files
+*.tfplan
