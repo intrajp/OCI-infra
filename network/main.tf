@@ -62,13 +62,13 @@ resource "oci_core_route_table" "my_route_table" {
   display_name   = "MyRouteTable"
 
   route_rules {
-    destination       = "0.0.0.0/0"                         # For internet 
+    destination       = "0.0.0.0/0"                         # For internet
     network_entity_id = oci_core_internet_gateway.my_igw.id # For IGW
   }
 }
 
 # -------------------------------------------------
-# 4-2. Private Route Table 
+# 4-2. Private Route Table
 # -------------------------------------------------
 resource "oci_core_route_table" "my_private_route_table" {
   compartment_id = var.compartment_id
@@ -107,12 +107,12 @@ resource "oci_core_subnet" "my_public_subnet" {
   # For Public Subnet
   prohibit_public_ip_on_vnic = false
 
-  # Designate DNS label to enable DNS in Subnet (Unique in VCN) 
+  # Designate DNS label to enable DNS in Subnet (Unique in VCN)
   dns_label = "tfpublic"
 }
 
 # -------------------------------------------------
-# 5-2. Private Subnet 
+# 5-2. Private Subnet
 # -------------------------------------------------
 resource "oci_core_subnet" "my_private_subnet" {
   compartment_id = var.compartment_id
@@ -132,15 +132,15 @@ resource "oci_core_subnet" "my_private_subnet" {
 }
 
 # -------------------------------------------------
-# 5-3. RAG Private Subnet 
+# 5-3. RAG Private Subnet
 # -------------------------------------------------
 resource "oci_core_subnet" "rag_private_subnet" {
   # Refer OCID of RAG compartment from data.compartments
   compartment_id = var.compartment_id
-  
-  vcn_id         = oci_core_vcn.my_vcn.id # Existing VCN
-  display_name   = "RagPrivateSubnet"
-  cidr_block     = var.rag_subnet_cidr_block
+
+  vcn_id       = oci_core_vcn.my_vcn.id # Existing VCN
+  display_name = "RagPrivateSubnet"
+  cidr_block   = var.rag_subnet_cidr_block
 
   # ★ Using same setting as compute/ private subnet
   route_table_id    = oci_core_route_table.my_private_route_table.id
@@ -151,15 +151,15 @@ resource "oci_core_subnet" "rag_private_subnet" {
 }
 
 # -------------------------------------------------
-# 5-4. OKE Private Subnet 
+# 5-4. OKE Private Subnet
 # -------------------------------------------------
 resource "oci_core_subnet" "oke_private_subnet" {
   # Refer OCID of OKE compartment from data.compartments
   compartment_id = var.compartment_id
-  
-  vcn_id         = oci_core_vcn.my_vcn.id # Existing VCN
-  display_name   = "OKEPrivateSubnet"
-  cidr_block     = var.oke_subnet_cidr_block
+
+  vcn_id       = oci_core_vcn.my_vcn.id # Existing VCN
+  display_name = "OKEPrivateSubnet"
+  cidr_block   = var.oke_subnet_cidr_block
 
   # ★ Using same setting as compute/ private subnet
   route_table_id    = oci_core_route_table.my_private_route_table.id
@@ -211,7 +211,7 @@ resource "oci_core_security_list" "my_security_list" {
     }
   }
 
-  # Allow all for egress 
+  # Allow all for egress
   egress_security_rules {
     protocol    = "all"
     destination = "0.0.0.0/0"
@@ -219,7 +219,7 @@ resource "oci_core_security_list" "my_security_list" {
 }
 
 # -------------------------------------------------
-# 6-2. Private Security List 
+# 6-2. Private Security List
 # -------------------------------------------------
 resource "oci_core_security_list" "my_private_security_list" {
   compartment_id = var.compartment_id
@@ -263,6 +263,19 @@ resource "oci_core_security_list" "my_private_security_list" {
     }
   }
 
+  # Allow the OKE ingress load balancer to reach the fixed NodePort
+  ingress_security_rules {
+    protocol    = "6"
+    source      = var.public_subnet_cidr_block
+    source_type = "CIDR_BLOCK"
+    stateless   = false
+
+    tcp_options {
+      min = 30080
+      max = 30080
+    }
+  }
+
   ingress_security_rules {
     # Ping(ICMP) from incide VCN (For Troubleshooting)
     protocol    = "1" # ICMP
@@ -285,10 +298,10 @@ resource "oci_core_security_list" "my_private_security_list" {
 
   # Allow connection to OpenSearch(9200) from VCN
   ingress_security_rules {
-    protocol  = "6"                  # TCP
-    source    = var.vcn_cidr_block # from whole VCN 
+    protocol    = "6"                # TCP
+    source      = var.vcn_cidr_block # from whole VCN
     source_type = "CIDR_BLOCK"
-    stateless = false
+    stateless   = false
     tcp_options {
       max = 9200
       min = 9200
