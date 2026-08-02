@@ -276,6 +276,19 @@ resource "oci_core_security_list" "my_private_security_list" {
     }
   }
 
+  # Allow OKE-managed Flannel VXLAN traffic between worker nodes
+  ingress_security_rules {
+    protocol    = "17" # UDP
+    source      = var.oke_subnet_cidr_block
+    source_type = "CIDR_BLOCK"
+    stateless   = false
+
+    udp_options {
+      min = 14789
+      max = 14789
+    }
+  }
+
   ingress_security_rules {
     # Ping(ICMP) from incide VCN (For Troubleshooting)
     protocol    = "1" # ICMP
