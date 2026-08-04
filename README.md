@@ -1,4 +1,9 @@
-# OCI 3-Tier Web Architecture with Terraform
+# OCI Infrastructure with Terraform
+
+> [!IMPORTANT]
+> The Terraform-managed legacy Load Balancer and `private_instance` were decommissioned on 2026-08-04. The website is now served by OKE through the OCI Native Ingress Controller. The
+> `dns/` module points to the active OKE Load Balancer using `web_load_balancer_ip`. References below to the legacy Load Balancer, private Nginx server, or Certbot setup are retained
+> only as historical documentation and must not be applied.
 
 This project deploys a standard 3-tier web architecture on Oracle Cloud Infrastructure (OCI) using Terraform. The infrastructure is modularized into `network`, `compute`, `load_balancer`, and `database` components, which are provisioned and managed as separate Terraform states.
 
