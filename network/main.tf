@@ -263,7 +263,7 @@ resource "oci_core_security_list" "my_private_security_list" {
     }
   }
 
-  # Allow the OKE ingress load balancer to reach the fixed NodePort
+  # Allow the OKE ingress load balancer to reach application and ACME solver NodePorts
   ingress_security_rules {
     protocol    = "6"
     source      = var.public_subnet_cidr_block
@@ -271,8 +271,8 @@ resource "oci_core_security_list" "my_private_security_list" {
     stateless   = false
 
     tcp_options {
-      min = 30080
-      max = 30080
+      min = 30000
+      max = 32767
     }
   }
 
