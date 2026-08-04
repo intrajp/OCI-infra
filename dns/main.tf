@@ -2,6 +2,7 @@
 resource "oci_dns_zone" "my_zone" {
   compartment_id = var.compartment_id
   name           = var.domain_name
+  scope          = "GLOBAL"
   zone_type      = "PRIMARY"
 }
 
@@ -15,7 +16,7 @@ resource "oci_dns_rrset" "a_record_root" {
     domain = var.domain_name
     rtype  = "A"
     ttl    = 300
-    rdata  = data.terraform_remote_state.load_balancer.outputs.load_balancer_public_ip
+    rdata  = var.web_load_balancer_ip
   }
 }
 
@@ -29,6 +30,6 @@ resource "oci_dns_rrset" "a_record_www" {
     domain = "www.${var.domain_name}"
     rtype  = "A"
     ttl    = 300
-    rdata  = data.terraform_remote_state.load_balancer.outputs.load_balancer_public_ip
+    rdata  = var.web_load_balancer_ip
   }
 }
